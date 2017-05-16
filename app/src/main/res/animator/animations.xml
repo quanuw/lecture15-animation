@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <objectAnimator
+
+    <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
         android:valueType="floatType"
         android:propertyName="radius"
         android:duration="1000"
@@ -11,4 +11,3 @@
         android:repeatMode="reverse"
         />
 
-</set>

@@ -1,9 +1,10 @@
 package edu.uw.animdemo;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 import android.widget.Button;
 
 public class ButtonActivity extends AppCompatActivity {
@@ -23,6 +24,10 @@ public class ButtonActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.v(TAG, "Clicked!");
 
+//                ObjectAnimator anim = ObjectAnimator.ofFloat(v, "y", 200);
+//                anim.start();
+                ViewPropertyAnimator anim = v.animate().x(200).y(300);
+                anim.start();
             }
         });
     }

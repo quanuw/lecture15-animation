@@ -64,6 +64,8 @@ public class DrawingView extends View {
         bmp = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);
 
         ball = new Ball(viewWidth/2, viewHeight/2, 100);
+//        ball.dx = 10;
+//        ball.dy = 15;
 
     }
 
@@ -84,6 +86,28 @@ public class DrawingView extends View {
     {
         super.onDraw(canvas); //make sure to have the parent do any drawing it is supposed to!
 
+        ball.dx *= 0.99; // slow ball down
+        ball.dy *= 0.99;
+
+        ball.cx += ball.dx;
+        ball.cy += ball.dy;
+
+        if(ball.cx + ball.radius > viewWidth) { //left bound
+            ball.cx = viewWidth - ball.radius;
+            ball.dx *= -1;
+        }
+        else if(ball.cx - ball.radius < 0) { //right bound
+            ball.cx = ball.radius;
+            ball.dx *= -1;
+        }
+        else if(ball.cy + ball.radius > viewHeight) { //bottom bound
+            ball.cy = viewHeight - ball.radius;
+            ball.dy *= -1;
+        }
+        else if(ball.cy - ball.radius < 0) { //top bound
+            ball.cy = ball.radius;
+            ball.dy *= -1;
+        }
 
         canvas.drawColor(Color.rgb(51,10,111)); //purple out the background
 
@@ -96,5 +120,7 @@ public class DrawingView extends View {
         }
         canvas.drawBitmap(bmp, 0, 0, null); //and then draw the BitMap onto the canvas.
         //Canvas bmc = new Canvas(bmp); //we can also make a canvas out of a Bitmap to draw on that (like fetching g2d from a BufferedImage) if we don't want to double-buffer
+
+        invalidate();
     }
 }
