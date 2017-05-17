@@ -1,7 +1,6 @@
 package edu.uw.animdemo;
 
 import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
@@ -20,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main";
 
-    private DrawingView view;
+    private DrawingSurfaceView view;
 
     private GestureDetectorCompat mDetector;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        view = (DrawingView)findViewById(R.id.drawingView);
+        view = (DrawingSurfaceView)findViewById(R.id.drawingView);
 
         mDetector = new GestureDetectorCompat(this, new MyGestureListener());
 
@@ -51,25 +50,53 @@ public class MainActivity extends AppCompatActivity {
         float y = event.getY();
         switch(action) {
             case (MotionEvent.ACTION_DOWN): //put finger down
+                Log.i(TAG, "FINGER DOWN!");
+                int pointerDownIndex = MotionEventCompat.getActionIndex(event);
+                int pointerDownId = MotionEventCompat.getPointerId(event, pointerDownIndex);
+                view.addTouch(pointerDownId, event.getX(pointerDownIndex), event.getY(pointerDownIndex));
                 //e.g., move ball
-                view.ball.cx = x;
-                view.ball.cy = y;
+//                view.ball.cx = x;
+//                view.ball.cy = y;
+//
+//                ObjectAnimator animX = ObjectAnimator.ofFloat(view.ball, "x", x);
+//                ObjectAnimator animY = ObjectAnimator.ofFloat(view.ball, "y", y);
+//                animX.setDuration(1000);
+//                animY.setDuration(1500);
+//                AnimatorSet animSetXY = new AnimatorSet();
+//                animSetXY.playTogether(animX, animY);
+//                animSetXY.start();
 
-                ObjectAnimator animX = ObjectAnimator.ofFloat(view.ball, "x", x);
-                ObjectAnimator animY = ObjectAnimator.ofFloat(view.ball, "y", y);
-                animX.setDuration(1000);
-                animY.setDuration(1500);
-                AnimatorSet animSetXY = new AnimatorSet();
-                animSetXY.playTogether(animX, animY);
-                animSetXY.start();
-
+                return true;
+            case (MotionEvent.ACTION_POINTER_DOWN): // for consecutive down events
+                int actionPointerDownIndex = MotionEventCompat.getActionIndex(event);
+                int actionPointerDownId = MotionEventCompat.getPointerId(event, actionPointerDownIndex);
+                view.addTouch(actionPointerDownId, event.getX(actionPointerDownIndex), event.getY(actionPointerDownIndex));
+                return true;
+            case (MotionEvent.ACTION_POINTER_UP): // for consecutive up events
+                int actionPointerUpIndex = MotionEventCompat.getActionIndex(event);
+                int actionPointerUpId = MotionEventCompat.getPointerId(event, actionPointerUpIndex);
+                view.removeTouch(actionPointerUpId);
                 return true;
             case (MotionEvent.ACTION_MOVE): //move finger
                 //e.g., move ball
                 view.ball.cx = x;
                 view.ball.cy = y;
+                // Move the balls
+                for (int i = 0; i < event.getPointerCount(); i++ ) { // Move all balls
+                    view.moveTouch(i, event.getX(i), event.getY(i));
+
+                }
                 return true;
-            case (MotionEvent.ACTION_UP): //lift finger up
+            case (MotionEvent.ACTION_UP): // put finger up
+                Log.i(TAG, "FINGER UP!");
+                int pointerUpIndex = MotionEventCompat.getActionIndex(event);
+                int pointerUpId = MotionEventCompat.getPointerId(event, pointerUpIndex);
+                view.removeTouch(pointerUpId);
+                // Force remove
+                for (int i = 0; i < event.getPointerCount(); i++) {
+                    view.removeTouch(i);
+                }
+                return true;//lift finger up
             case (MotionEvent.ACTION_CANCEL): //aborted gesture
             case (MotionEvent.ACTION_OUTSIDE): //outside bounds
             default:

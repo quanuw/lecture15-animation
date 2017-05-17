@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="edu.uw.animdemo.MainActivity">
 
-    <view class="edu.uw.animdemo.DrawingView"
+    <view class="edu.uw.animdemo.DrawingSurfaceView"
         android:id="@+id/drawingView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

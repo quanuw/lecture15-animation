@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.HashMap;
+
 /**
  * An example SurfaceView for generating graphics on
  * @author Joel Ross
@@ -31,6 +33,8 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     private Paint goldPaint; //drawing variables (pre-defined for speed)
 
     public Ball ball; //public for easy access
+
+    public HashMap<Integer, Ball> touches;
 
 
     /**
@@ -61,6 +65,8 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         goldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         goldPaint.setColor(Color.rgb(145, 123, 76));
 
+        touches = new HashMap<Integer, Ball>();
+
         init();
     }
 
@@ -72,6 +78,23 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         ball = new Ball(viewWidth/2, viewHeight/2, 100);
         ball.dx = 10;
         ball.dy = 15;
+    }
+
+    // Add ball to hashmap
+    public synchronized void addTouch(int id, float x, float y) {
+        Ball ball = new Ball(x, y, 100);
+        touches.put(id, ball);
+    }
+
+    // Remove ball from hashmap
+    public synchronized void removeTouch(int id) {
+        touches.remove(id);
+    }
+
+    // Update ball coordinates
+    public synchronized void moveTouch(int id, float x, float y) {
+        Ball ball = new Ball(x, y, 100);
+        touches.put(id, ball);
     }
 
 
@@ -113,7 +136,13 @@ public class DrawingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
         canvas.drawColor(Color.rgb(51,10,111)); //purple out the background
 
-        canvas.drawCircle(ball.cx, ball.cy, ball.radius, whitePaint); //we can draw directly onto the canvas
+//        canvas.drawCircle(ball.cx, ball.cy, ball.radius, whitePaint); //we can draw directly onto the canvas
+
+        Paint goldPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        goldPaint.setColor(Color.YELLOW);
+        for (Ball ball : touches.values()) {
+            canvas.drawCircle(ball.cx, ball.cy, ball.radius, goldPaint);
+        }
     }
 
 
